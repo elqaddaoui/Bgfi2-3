@@ -1310,6 +1310,71 @@
   70% { transform: translate3d(-5px, -8px, 0) rotate(160deg); opacity: .5; }
 }
 
+/* ------------------------------------------------------------
+   Indicateurs · merged grid (ex-#impact folded in) — 3 per row
+   The six figures share one single card language; the grid steps
+   3 → 2 → 1 column and every card keeps its rows aligned so the
+   values, labels, notes and bars sit on the same baselines.
+   ------------------------------------------------------------ */
+.indicators-grid--trio {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(18px, 1.9vw, 26px);
+  margin-top: clamp(48px, 5vw, 72px);
+  align-items: stretch;
+}
+.indicators-grid--trio .indicator-card {
+  /* no featured scale inside a regular grid — keeps rows even */
+  transform: none;
+  height: 100%;
+}
+.indicators-grid--trio .indicator-card:hover { transform: translateY(-8px); }
+.indicators-section .indicators-grid--trio .indicator-inner {
+  height: 100%;
+  /* icon · value · unit · label · note · filler · bar */
+  grid-template-rows: auto auto 1.45em auto auto 1fr auto;
+}
+.indicators-section .indicators-grid--trio .indicator-label {
+  font-size: 14.5px;
+  line-height: 1.45;
+  /* Reserve three lines. Cards are independent grid items, so rows cannot
+     sync automatically — a fixed label box keeps notes and bars on the same
+     baseline even when a label wraps differently at another breakpoint. */
+  min-height: 4.35em;
+}
+.indicators-section .indicators-grid--trio .indicator-note { min-height: 1.4em; }
+.indicators-section .indicators-grid--trio .indicator-value { font-size: clamp(2.3rem, 3.3vw, 3.1rem); }
+
+/* Closing line lifted up from #story-perf — reads as the section's chute */
+.indicators-section .indicators-outro {
+  max-width: 60ch;
+  margin: clamp(38px, 4.4vw, 60px) auto 0;
+  padding-top: clamp(24px, 2.6vw, 34px);
+  border-top: 1px solid rgba(183, 239, 255, .22);
+  font-family: var(--font-editorial);
+  font-size: clamp(18px, 1.5vw, 21px);
+  line-height: 1.6;
+  text-align: center;
+  color: rgba(226, 244, 255, .9);
+}
+.indicators-section .indicators-outro em { font-style: italic; }
+
+/* Title: let the long headline breathe instead of stretching edge to edge */
+.indicators-section .section-title.center.light { max-width: 20ch; margin-inline: auto; text-wrap: balance; }
+.indicators-section .section-lead.center.light { max-width: 66ch; margin-inline: auto; }
+
+@media (max-width: 1080px) {
+  .indicators-grid--trio { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .indicators-grid--trio { grid-template-columns: minmax(0, 1fr); }
+  .indicators-section .indicators-grid--trio .indicator-inner {
+    /* single column: the fixed unit row is no longer needed for alignment */
+    grid-template-rows: auto auto auto auto auto 1fr auto;
+    padding: 30px 22px 26px;
+  }
+  .indicators-section .section-title.center.light { max-width: none; }
+}
+
 /* ============================================================
    8 · IMPACT — clean editorial metric cards
    ============================================================ */
@@ -1937,9 +2002,39 @@ section[id] { scroll-margin-top: 96px; }
     linear-gradient(128deg, #021a46 0%, #064a8c 51%, #00a6aa 100%) !important;
 }
 #indaba-2026 .indaba-shell { grid-template-columns: minmax(0, 1.34fr) minmax(300px, .66fr); gap: clamp(48px, 6vw, 94px); }
-#indaba-2026 .indaba-visuals { min-height: clamp(540px, 50vw, 700px); }
-#indaba-2026 .indaba-photo--main { inset: 0 7% 86px 0; border-radius: 28px 28px 112px 28px; }
 #indaba-2026 .indaba-photo--support { width: min(47%, 330px); right: 0; bottom: 0; aspect-ratio: 1.04; }
+
+/* ------------------------------------------------------------
+   Indaba · uncropped delegation photo
+   The visuals column used to be an absolutely-positioned, taller-
+   than-wide box (~1.1 ratio) while the photograph is 1024×682
+   (~1.5). With `object-fit: cover` that chopped both sides — and
+   with them the "INVESTING IN AFRICAN MINING INDABA" wall text in
+   the top-right corner. The figure now flows normally and adopts
+   the picture's own ratio, so the whole frame is always visible on
+   desktop and mobile alike.
+   ------------------------------------------------------------ */
+#indaba-2026 .indaba-visuals {
+  position: relative;
+  min-height: 0;
+  display: block;
+}
+#indaba-2026 .indaba-photo--main {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  aspect-ratio: 1024 / 682;
+  border-radius: 28px 28px 112px 28px;
+}
+#indaba-2026 .indaba-photo--main img {
+  width: 100%;
+  height: 100%;
+  /* `contain` guarantees nothing is ever cut; the ratio above means
+     there are no letterbox bars in practice. */
+  object-fit: contain;
+  object-position: center;
+  background: #0a2c5c;
+}
 #indaba-2026 .indaba-copy,
 #indaba-2026 .indaba-copy .story-title,
 #indaba-2026 .indaba-copy .editorial-date,
@@ -1976,6 +2071,30 @@ section[id] { scroll-margin-top: 96px; }
 .etoiles-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 34px; }
 .etoiles-steps span { display: grid; gap: 6px; padding: 18px; border: 1px solid rgba(0,82,151,.14); background: rgba(255,255,255,.7); color: var(--bgfi-blue-deep); font-size: 11px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
 .etoiles-steps b { font-family: var(--font-display); font-size: 26px; color: #88a878; }
+
+/* ------------------------------------------------------------
+   Étoiles · rebalanced after the "01/02/03" step strip was removed
+   The copy column lost ~120px of height, which left the tall poster
+   visually unanswered. Columns are re-weighted towards the text and
+   the poster is capped, so the two halves read as a balanced spread.
+   ------------------------------------------------------------ */
+/* Scoped above the 1100px breakpoint only: past it `.etoiles-grid`
+   collapses to a single column and any column re-weighting here would
+   override it (higher ID specificity) and squash the copy. */
+@media (min-width: 1101px) {
+  #story-etoiles .etoiles-grid {
+    grid-template-columns: minmax(280px, .76fr) minmax(0, 1.24fr);
+    gap: clamp(44px, 6vw, 88px);
+    align-items: center;
+  }
+  #story-etoiles .etoiles-visual img {
+    max-height: clamp(380px, 40vw, 520px);
+    object-position: center top;
+  }
+  #story-etoiles .etoiles-copy > p:not(.editorial-date) { max-width: 62ch; }
+}
+/* the closing paragraph keeps its air now that nothing follows it */
+#story-etoiles .etoiles-copy > p:last-child { margin-bottom: 0; }
 
 /* Women's month layered portrait */
 .women-frame { min-height: 620px; overflow: visible; background: transparent; box-shadow: none; }
@@ -2183,7 +2302,10 @@ section[id] { scroll-margin-top: 96px; }
   .testimonial-copy { padding: 8px 6px 10px; }
 }
 @media (max-width: 720px) {
-  #indaba-2026 .indaba-visuals { min-height: 420px; }
+  /* height comes from the photo's own aspect-ratio — see the
+     "Indaba · uncropped delegation photo" block above */
+  #indaba-2026 .indaba-visuals { min-height: 0; }
+  #indaba-2026 .indaba-photo--main { border-radius: 20px 20px 62px 20px; }
   .education-gallery, .women-frame { min-height: 430px; }
   .education-photo--main { inset: 0 5% 78px 0; border-radius: 54px 16px 16px 16px; }
   .education-photo--portrait { width: 62%; bottom: 18px; border-width: 4px; }
@@ -2694,4 +2816,248 @@ section[id] { scroll-margin-top: 96px; }
 
 @media (prefers-reduced-motion: reduce) {
   .seminar-photo img, .tour-photo img, .testimonial-photo { transition: none !important; }
+}
+
+/* ============================================================
+   MUANDA · three layout variations
+   `images/img12.jpg` was removed from the gallery, leaving two
+   interior shots. Each variation is a self-contained composition
+   built for exactly 1 hero + 2 details, so no slot is ever orphaned.
+   Variation 1 ships live; 2 and 3 are kept in the document behind
+   `display:none` (same convention as the BGFI Tour variations).
+   ============================================================ */
+
+/* Shared ------------------------------------------------------ */
+.muanda-variation figure { margin: 0; }
+/* Only the small photo credits get the uppercase micro-type. Scoped to
+   `.mp-duo`/`.mv-thumbs`/`.muanda-details` so it can never leak into a
+   figcaption that wraps real headings (see variation 3's .mp-overlay). */
+.muanda-variation .muanda-details figcaption,
+.muanda-variation .mv-thumbs figcaption,
+.muanda-variation .mp-duo figcaption {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(233, 242, 252, .82);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .17em;
+  text-transform: uppercase;
+}
+
+/* ---------- VARIATION 1 · Triptyque ------------------------- */
+/* Hero on the left, the two remaining shots as equal side columns. */
+.muanda-variation--triptyque .muanda-gallery {
+  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+  gap: clamp(16px, 1.6vw, 22px);
+  align-items: stretch;
+}
+.muanda-variation--triptyque .muanda-hero img { min-height: 0; height: 100%; }
+.muanda-variation--triptyque .muanda-details {
+  /* two rows now, not three — no empty third slot */
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: clamp(16px, 1.6vw, 22px);
+}
+.muanda-variation--triptyque .muanda-details figure {
+  position: relative;
+  min-height: 0;
+}
+.muanda-variation--triptyque .muanda-details figure img {
+  min-height: 0;
+  height: 100%;
+  aspect-ratio: 4 / 3;
+}
+.muanda-variation--triptyque .muanda-details figcaption {
+  position: absolute;
+  left: 16px;
+  bottom: 14px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(0, 13, 36, .68);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.muanda-variation--triptyque .muanda-gallery { margin-bottom: clamp(30px, 3.4vw, 44px); }
+
+@media (max-width: 900px) {
+  .muanda-variation--triptyque .muanda-gallery { grid-template-columns: 1fr; }
+  .muanda-variation--triptyque .muanda-details {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: none;
+  }
+  .muanda-variation--triptyque .muanda-hero img { min-height: 300px; }
+}
+@media (max-width: 560px) {
+  .muanda-variation--triptyque .muanda-details { grid-template-columns: 1fr; }
+  .muanda-variation--triptyque .muanda-details figcaption { left: 12px; bottom: 11px; }
+}
+
+/* ---------- VARIATION 2 · Vitrine --------------------------- */
+/* Tall portrait window + stacked editorial column. */
+.muanda-variation--vitrine .muanda-vitrine {
+  display: grid;
+  grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr);
+  gap: clamp(36px, 5vw, 80px);
+  align-items: center;
+}
+.muanda-variation--vitrine .mv-hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: 26px 26px 96px 26px;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, .42);
+}
+.muanda-variation--vitrine .mv-hero img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  transition: transform 1.2s var(--ease-lux);
+}
+.muanda-variation--vitrine .mv-hero:hover img { transform: scale(1.05); }
+.muanda-variation--vitrine .mv-copy .chapter-num,
+.muanda-variation--vitrine .mv-copy .story-month,
+.muanda-variation--vitrine .mv-copy .story-rubric {
+  display: inline-block;
+  margin: 0 10px 12px 0;
+}
+.muanda-variation--vitrine .mv-copy .story-title { margin: 6px 0 22px; }
+.muanda-variation--vitrine .mv-copy p {
+  max-width: 56ch;
+  font-family: var(--font-editorial);
+  font-size: 17px;
+  line-height: 1.75;
+  color: rgba(240, 246, 252, .8);
+}
+.muanda-variation--vitrine .mv-lead {
+  font-size: 20px !important;
+  color: #fff !important;
+}
+.muanda-variation--vitrine .mv-lead strong { color: var(--bgfi-gold-glow); font-weight: 600; }
+.muanda-variation--vitrine .mv-lead em { color: var(--bgfi-gold-light); font-style: italic; }
+.muanda-variation--vitrine .mv-thumbs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(14px, 1.5vw, 20px);
+  margin-top: clamp(26px, 3vw, 38px);
+}
+.muanda-variation--vitrine .mv-thumbs figure {
+  /* the caption sits *below* the frame, so only the image is clipped */
+  border-radius: 16px;
+}
+.muanda-variation--vitrine .mv-thumbs figure > img {
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, .32);
+}
+.muanda-variation--vitrine .mv-thumbs img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  transition: transform 1s var(--ease-lux);
+}
+.muanda-variation--vitrine .mv-thumbs figure:hover img { transform: scale(1.08); }
+.muanda-variation--vitrine .mv-thumbs figcaption { padding: 11px 2px 0; }
+
+@media (max-width: 960px) {
+  .muanda-variation--vitrine .muanda-vitrine { grid-template-columns: 1fr; }
+  .muanda-variation--vitrine .mv-hero { border-radius: 20px 20px 64px 20px; }
+  .muanda-variation--vitrine .mv-hero img { aspect-ratio: 4 / 3; }
+}
+@media (max-width: 520px) {
+  .muanda-variation--vitrine .mv-thumbs { grid-template-columns: 1fr; }
+}
+
+/* ---------- VARIATION 3 · Panorama -------------------------- */
+/* Cinematic hero with the title laid over it, then a duo + caption. */
+.muanda-variation--panorama .mp-stage {
+  position: relative;
+  overflow: hidden;
+  border-radius: clamp(18px, 2vw, 28px);
+  box-shadow: 0 46px 110px rgba(0, 0, 0, .46);
+}
+.muanda-variation--panorama .mp-stage img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 21 / 9;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 1.4s var(--ease-lux);
+}
+.muanda-variation--panorama .mp-stage:hover img { transform: scale(1.04); }
+.muanda-variation--panorama .mp-veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 10, 30, .92) 0%, rgba(0, 12, 34, .58) 42%, rgba(0, 16, 44, .1) 78%);
+}
+.muanda-variation--panorama .mp-overlay {
+  position: absolute;
+  left: clamp(20px, 4vw, 56px);
+  right: clamp(20px, 4vw, 56px);
+  bottom: clamp(22px, 3.4vw, 46px);
+  display: block;
+}
+.muanda-variation--panorama .mp-overlay .story-month { display: inline-block; margin-bottom: 10px; }
+.muanda-variation--panorama .mp-overlay .story-title {
+  margin: 0 0 14px;
+  font-size: clamp(1.9rem, 4vw, 3.5rem);
+  /* the headline keeps its editorial casing / spacing */
+  text-transform: none;
+  letter-spacing: -.01em;
+  text-wrap: balance;
+}
+.muanda-variation--panorama .mp-place {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--bgfi-gold-light);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+.muanda-variation--panorama .mp-duo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: clamp(20px, 2.6vw, 40px);
+  align-items: center;
+  margin-top: clamp(26px, 3vw, 44px);
+}
+.muanda-variation--panorama .mp-duo > figure { border-radius: 18px; }
+.muanda-variation--panorama .mp-duo img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  /* clip + shadow on the image so the caption below stays visible */
+  border-radius: 18px;
+  box-shadow: 0 22px 56px rgba(0, 0, 0, .34);
+  transition: transform 1s var(--ease-lux);
+}
+.muanda-variation--panorama .mp-duo figure:hover img { transform: scale(1.08); }
+.muanda-variation--panorama .mp-duo figcaption { padding: 11px 2px 0; }
+.muanda-variation--panorama .mp-caption {
+  margin: 0;
+  font-family: var(--font-editorial);
+  font-size: clamp(15px, 1.2vw, 17px);
+  line-height: 1.78;
+  text-align: center;
+  color: rgba(240, 246, 252, .84);
+}
+.muanda-variation--panorama .mp-caption strong { color: var(--bgfi-gold-glow); font-weight: 600; }
+
+@media (max-width: 900px) {
+  .muanda-variation--panorama .mp-stage img { aspect-ratio: 16 / 10; }
+  .muanda-variation--panorama .mp-duo {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  /* caption spans the full width below the two shots */
+  .muanda-variation--panorama .mp-caption { grid-column: 1 / -1; order: 3; }
+}
+@media (max-width: 520px) {
+  .muanda-variation--panorama .mp-stage img { aspect-ratio: 4 / 3; }
+  .muanda-variation--panorama .mp-duo { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .muanda-variation img { transition: none !important; }
 }
